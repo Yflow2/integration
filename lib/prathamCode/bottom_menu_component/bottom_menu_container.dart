@@ -3,6 +3,9 @@ import 'dart:math';
 import 'dart:developer' as dev;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intern/prathamCode/bloc/bloc_for_more_wigdet/more_bloc.dart';
+import 'package:intern/prathamCode/bloc/bloc_for_more_wigdet/more_event.dart';
 
 import '../bottomApp.dart';
 import '../bottom_sheet_after_api.dart';
@@ -118,6 +121,9 @@ class _BottomMenuContainerState extends State<BottomMenuContainer> with TickerPr
                                   icon: Icon(Icons.more_horiz),
                                   onPressed: () {
                                     dev.log("Button pressed");
+                                    context
+                                        .read<MoreBloc>()
+                                        .add(ToggleMenuEvent());
                                     /*toggleMenu();*/
                                   },
                                 ),
@@ -238,6 +244,9 @@ class _BottomMenuContainerState extends State<BottomMenuContainer> with TickerPr
                                           icon: Icon(Icons.more_horiz),
                                           onPressed: () {
                                             /*toggleMenu();*/
+                                            context
+                                                .read<MoreBloc>()
+                                                .add(ToggleMenuEvent());
                                           },
                                         ),
                                       ),

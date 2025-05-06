@@ -32,48 +32,62 @@ class _FullScreenBottomSheetState extends State<FullScreenBottomSheet> with Tick
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: AnimatedBuilder(
-        animation: _rotationController,
-        builder: (BuildContext context, Widget? child) {
-          return CustomPaint(
-            painter: _GradientBorderPainter(angle: _rotationController.value * 2 * pi),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(28),topRight: Radius.circular(28)),
-                color: Colors.white,
-              ),
-              width: MediaQuery.of(context).size.width * 0.97,
-              height: MediaQuery.sizeOf(context).height * 0.95, // Adjust as needed
-              padding: EdgeInsets.all(MediaQuery.sizeOf(context).height * 0.01),
-              child: LayoutBuilder(
-                builder: (BuildContext ctx, BoxConstraints constraints) {
-                  return Column(
-                    children: [
-                      SizedBox(
-                        height: constraints.maxHeight * 0.7,
-                        width: constraints.maxWidth * 0.9,
-                        child: bottomsheetComponents(),
-                      ),
-                      SizedBox(
-                        height: constraints.maxHeight * 0.3,
-                        child: Hero(
-                          tag: "pratham",
-                          child: CustomMicWidget(
-                            isListening: true,
-                            height: 450,
-                            width: 350,
-                          ),
-                        ),
-                      )
-                    ],
-                  );
-                },
-              ),
+    return AnimatedBuilder(
+      animation: _rotationController,
+      builder: (BuildContext context, Widget? child) {
+        return CustomPaint(
+          painter: _GradientBorderPainter(angle: _rotationController.value * 2 * pi),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(28),topRight: Radius.circular(28)),
+              color: Colors.white,
             ),
-          );
-        },
-      ),
+            width: MediaQuery.sizeOf(context).width ,
+            height: MediaQuery.sizeOf(context).height * 0.95, // Adjust as needed
+            padding: EdgeInsets.all(MediaQuery.sizeOf(context).height * 0.01),
+            child: LayoutBuilder(
+              builder: (BuildContext ctx, BoxConstraints constraints) {
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: constraints.maxHeight * 0.6,
+                      child: bottomsheetComponents(),
+                    ),
+                    SizedBox(
+                      height: constraints.maxHeight * 0.3,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          CircleAvatar(
+                              child: Icon(Icons.done,
+                                  color: Colors.white, size: 30),
+                              backgroundColor: Colors.green),
+                          Hero(
+                            tag: "pratham",
+                            child: CustomMicWidget(
+                              isListening: true,
+                              height: 400,
+                              width: 300,
+                            ),
+                          ),
+                          CircleAvatar(
+                            child: Icon(Icons.close,
+                                color: Colors.white, size: 30),
+                            backgroundColor: Colors.red,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: constraints.maxHeight * 0.1,
+                    )
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }

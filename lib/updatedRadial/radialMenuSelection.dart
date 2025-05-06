@@ -21,9 +21,14 @@ class RadialMenu extends StatefulWidget {
 }
 
 class _RadialMenuState extends State<RadialMenu> {
+  final List<double> anglesPotrait = [-math.pi / 2 , -math.pi + math.pi * 0.05, -math.pi / 2 + math.pi * 0.45];
+  final List<double> anglesLandscape = [-math.pi / 2 , -math.pi + math.pi * 0.15, -math.pi / 2 + math.pi * 0.35];
   @override
   Widget build(BuildContext context) {
-    double radius = MediaQuery.of(context).size.width * 0.21;
+
+    final width = MediaQuery.sizeOf(context).width;
+
+    double radius = width > 400 ? MediaQuery.sizeOf(context).width * 0.17: MediaQuery.of(context).size.width * 0.21;
 
     return AnimatedBuilder(
       animation: widget.controller,
@@ -31,14 +36,14 @@ class _RadialMenuState extends State<RadialMenu> {
         return ClipPath(
           clipper: RadialMenuClipper(progress: widget.controller.value),
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.3,
-            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.8 ,
+            width: MediaQuery.of(context).size.width   ,
             color: const Color(0xFF1A1A3C),
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: List.generate(widget.icons.length, (index) {
                 // Angles: 0°, -90°, -180° → 0, -π/2, -π
-                double angle = -index * (math.pi / (widget.icons.length - 1));
+                double angle = width > 400 ? anglesLandscape[index]:anglesPotrait[index]; // Use predefined angles
                 double animatedRadius = radius * widget.controller.value;
 
                 Offset offset = Offset(
@@ -59,7 +64,7 @@ class _RadialMenuState extends State<RadialMenu> {
                             onPressed: widget.onTaps[index],
                             icon: Icon(
                               widget.icons[index],
-                              size: radius/2.5,
+                              size:  width > 400? radius/5: radius/2.5,
                               color: Colors.lightBlueAccent,
                             ),
                           ),
@@ -93,10 +98,13 @@ class RadialMenuClipper extends CustomClipper<Path> {
   RadialMenuClipper({required this.progress});
 
 
+
+
   @override
   Path getClip(Size size) {
-    final center = Offset(size.width / 2, size.height);
-    final radius = size.width * 0.4;
+    final center = Offset(size.width /2, size.height);
+
+    final radius =  size.width>400 ?size.width * 0.25:size.width * 0.4;
 
 
     final startAngle = math.pi; // Start from left (180°)

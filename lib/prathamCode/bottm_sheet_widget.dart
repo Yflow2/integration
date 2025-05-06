@@ -68,8 +68,8 @@ class _bottomsheetComponentsState extends State<bottomsheetComponents>
                 child: Stack(
                   children: [
                     Positioned(
-                      top: 20,
-                      right: 0,
+                      top: 10,
+                      right: 10,
                       child: GestureDetector(
                           onTap: () {
                             Navigator.pop(context);

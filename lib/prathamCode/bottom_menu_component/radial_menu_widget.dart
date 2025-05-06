@@ -1,8 +1,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../updatedRadial/radialMenuSelection.dart';
+import '../bloc/bloc_for_more_wigdet/more_bloc.dart';
+import '../bloc/bloc_for_more_wigdet/more_state.dart';
 import '../bottom_sheet_after_api.dart';
 import '../language_bottom_sheet_pratham.dart';
 
@@ -51,28 +54,28 @@ class _RadialMenuWidgetState extends State<RadialMenuWidget> with TickerProvider
     showBottomSheetWidget(context);
   }
 
-  void toggleMenu() {
-    isExpanded = !isExpanded;
-    setState(() {
-      if (isExpanded) {
-        radialController.reset();
-        radialController.forward();
-      } else {
-        radialController.reverse();
-      }
-    });
-  }
-  
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: MediaQuery.sizeOf(context).height * 0.15,
-      child: RadialMenu(
-        controller: radialController,
-        icons: [Icons.language, Icons.settings, Icons.file_copy],
-        labels: ['Languages', 'Settings', 'Recordings'],
-        onTaps: [showLanguages, showSettings, showMessageAfterApi],
-      ),
+    return BlocConsumer<MoreBloc, MoreState>(
+      listener: (context, state) {
+        if (state is BottomSheetIsExpanded) {
+          radialController.forward();
+        } else if (state is BottomSheetIsHidden) {
+          radialController.reverse();
+        }
+      },
+      builder: (context, state) {
+        return Positioned(
+          bottom: MediaQuery.sizeOf(context).height * 0.15,
+          child: RadialMenu(
+            controller: radialController,
+            icons: [Icons.language, Icons.settings, Icons.file_copy],
+            labels: ['Languages', 'Settings', 'Recordings'],
+            onTaps: [showLanguages, showSettings, showMessageAfterApi],
+          ),
+        );
+      },
     );
   }
 }
+

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intern/prathamCode/bloc/bloc_for_more_wigdet/more_bloc.dart';
+import 'package:intern/prathamCode/bloc/bloc_for_more_wigdet/more_state.dart';
 import 'package:intern/prathamCode/bottom_menu_component/bottom_menu_container.dart';
 import 'package:intern/prathamCode/bottom_menu_component/radial_menu_widget.dart';
 import 'package:intern/prathamCode/text_speech_page.dart';
@@ -56,9 +59,6 @@ class _BottomMenuState extends State<BottomMenu> with TickerProviderStateMixin {
     );
   }
 
-
-
-
   /*  void toggleDialog() {
    dev.log("More Button clicked");
    isOpen = !isOpen;
@@ -73,7 +73,6 @@ class _BottomMenuState extends State<BottomMenu> with TickerProviderStateMixin {
    });
  }*/
 
-
   @override
   void dispose() {
     super.dispose();
@@ -85,7 +84,6 @@ class _BottomMenuState extends State<BottomMenu> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -96,7 +94,22 @@ class _BottomMenuState extends State<BottomMenu> with TickerProviderStateMixin {
             // Your main content (can be anything)
             Container(color: Colors.white),
 
-            /*Positioned(
+            //Radial Menu
+            RadialMenuWidget(isExpanded: isExpanded),
+
+            // Bottom Menu
+            BottomMenuContainer(
+              isKeyboardDisabled: isKeyboardDisabled,
+              focusNode: _focusNode,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+//Animated Dialogue incase of widgets more than 3
+/*Positioned(
              bottom: MediaQuery.sizeOf(context).height * 0.15,
              left: 0,
              right: 0,
@@ -116,19 +129,6 @@ class _BottomMenuState extends State<BottomMenu> with TickerProviderStateMixin {
                ],
              ),
            ),*/
-
-            //Radial Menu
-            RadialMenuWidget(isExpanded: isExpanded,),
-
-            // Bottom Menu
-            BottomMenuContainer(isKeyboardDisabled: isKeyboardDisabled, focusNode: _focusNode,),
-          ],
-
-        ),
-      ),
-    );
-  }
-}
 
 class ProgressRectClipper extends CustomClipper<Rect> {
   final double currentProgress;

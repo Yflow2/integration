@@ -25,7 +25,7 @@ class CustomMicWidget extends StatefulWidget {
     this.ringRadius = 0.23,
     this.micButtonSize = 0.2,
     this.glowSize = 0.28,
-    this.iconSize = 0.4,
+    this.iconSize =  0.4,
     this.bars = 50,
     this.blurRadius = 15,
     this.spreadRadius = 15,
@@ -161,12 +161,15 @@ class _CustomMicWidgetState extends State<CustomMicWidget>
 
   @override
   Widget build(BuildContext context) {
+
+    final width = MediaQuery.sizeOf(context).width ;
+
     screenSize = Size(widget.width, widget.height);
-    dev.log(screenSize.toString());
-    double ringRadius = screenSize.width > 400?screenSize.width * 0.1:screenSize.width * 0.23; // Responsive ringRadius
-    double micButtonSize = screenSize.width * 0.2; // Responsive micButtonSize
+
+    double ringRadius = width > 400?screenSize.width * 0.19:screenSize.width * 0.23; // Responsive ringRadius
+    double micButtonSize = width>400 ? screenSize.width * 0.15:  screenSize.width * 0.2; // Responsive micButtonSize
     double glowSize = screenSize.width > 400? screenSize.width * 0.05:screenSize.width * 0.28; // Responsive glowSize
-    double iconSize = micButtonSize * 0.4; // Responsive iconSize
+    double iconSize =  micButtonSize * 0.4; // Responsive iconSize
 
 
 
