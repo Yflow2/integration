@@ -4,6 +4,7 @@ import 'dart:developer' as dev;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intern/prathamCode/bloc/bloc_for_mic_widget/mic_bloc.dart';
+import 'package:intern/prathamCode/bloc/bloc_for_speech_to_text/stt_bloc.dart';
 
 class CustomMicWidget extends StatefulWidget {
   final double width;
@@ -205,6 +206,7 @@ class _CustomMicWidgetState extends State<CustomMicWidget>
             GestureDetector(
               onTap: widget.disabled ? widget.onButtonPressed : () {
                 context.read<MicBloc>().add(ToggleMicEvent());
+                context.read<SttBloc>().add(ToggleListening());
               },
               child: AnimatedBuilder(
                 animation: _rotationController,

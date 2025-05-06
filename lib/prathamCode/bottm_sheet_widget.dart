@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intern/prathamCode/bloc/bloc_for_speech_to_text/stt_bloc.dart';
 import 'dart:math';
 
 import 'package:speech_to_text/speech_to_text.dart';
@@ -32,19 +34,6 @@ class _bottomsheetComponentsState extends State<bottomsheetComponents>
       ..repeat();
   }
 
-  void _toggleListening() {
-    setState(() {
-      isListening = !isListening;
-      if (isListening) {
-        _startListening();
-        // _pulseController.repeat(reverse: true);
-      } else {
-        _stopListening();
-/*        _pulseController.stop();
-        _pulseController.value = 1.0;*/ // Reset scale
-      }
-    });
-  }
 
   @override
   void dispose() {
@@ -83,13 +72,25 @@ class _bottomsheetComponentsState extends State<bottomsheetComponents>
                       alignment: Alignment.topCenter,
                       child: Padding(
                         padding: const EdgeInsets.only(top: 50),
-                        child: Text(
-                          _text,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 30,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
+                        child: BlocBuilder<SttBloc,SttState>(builder: (context, state) {
+
+                          //Empty text to add if available
+                          String text = "";
+                          bool isListening = state is SpeechListening;
+
+                          if(state is SpeechResult){
+                            text = state.text;
+                          }
+
+                          return Text(
+                            //Enter the text if captured by user
+                            text.isNotEmpty? text : _text,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 30,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          );
+                        },)
                       ),
                     ),
                   ],

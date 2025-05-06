@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intern/prathamCode/bloc/bloc_for_speech_to_text/stt_bloc.dart';
 import 'bloc/bloc_for_mic_widget/mic_bloc.dart';
 import 'custom_mic_widget.dart';
 import 'bottm_sheet_widget.dart';
@@ -15,6 +16,7 @@ class _FullScreenBottomSheetState extends State<FullScreenBottomSheet> with Tick
 
   late AnimationController _rotationController;
   late MicBloc? micBloc;
+  late SttBloc? sttBloc;
 
   @override
   void initState() {
@@ -25,11 +27,13 @@ class _FullScreenBottomSheetState extends State<FullScreenBottomSheet> with Tick
         duration: Duration(seconds: 5))..repeat();
 
     context.read<MicBloc>().add(StartMicEvent());
+    context.read<SttBloc>().add(StartListening());
   }
 
   @override
   void didChangeDependencies() {
     micBloc = context.read<MicBloc>();
+    sttBloc = context.read<SttBloc>();
     super.didChangeDependencies();
   }
 
@@ -39,6 +43,7 @@ class _FullScreenBottomSheetState extends State<FullScreenBottomSheet> with Tick
     // TODO: implement dispose
     _rotationController.dispose();
     micBloc?.add(StopMicEvent());
+    sttBloc?.add(StopListening());
     super.dispose();
   }
 

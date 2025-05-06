@@ -14,16 +14,26 @@ class SttBloc extends Bloc<SttEvent,SttState>{
   SttBloc()
       : speechToText = SpeechToText(),
         super(SpeechInitial()){
+
+    on<ToggleListening>((event, emit) {
+      if(state is SpeechListening){
+        _onStartListening(emit);
+      } else {
+        _onStopListening(emit);
+      }
+    },);
+
     on<StartListening>((event, emit) {
-      _onStartListening;
+      _onStartListening(emit);
     },);
 
     on<StopListening>((event, emit) {
-      _onStopListening;
+      _onStopListening(emit);
     },);
+
   }
 
-  Future<void> _onStartListening(StartListening event,Emitter<SttState> emit ) async {
+  Future<void> _onStartListening(Emitter<SttState> emit ) async {
     bool available = await speechToText.initialize(
       onStatus: (status) {
         return dev.log("Status $status");
@@ -33,9 +43,9 @@ class SttBloc extends Bloc<SttEvent,SttState>{
       },
     );
 
-    if(available){
-      emit(SpeechListening());
-      speechToText.listen(
+    if(available) {
+       emit(SpeechListening());
+       speechToText.listen(
         onResult: (result) {
           emit(SpeechResult(result.recognizedWords));
         },
@@ -45,7 +55,7 @@ class SttBloc extends Bloc<SttEvent,SttState>{
     }
   }
 
-  void _onStopListening(StopListening event,Emitter<SttState> emit){
+  void _onStopListening(Emitter<SttState> emit){
     speechToText.stop();
     emit(SpeechNotListening());
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intern/prathamCode/bloc/bloc_for_mic_widget/mic_bloc.dart';
 import 'package:intern/prathamCode/bloc/bloc_for_more_wigdet/more_bloc.dart';
+import 'package:intern/prathamCode/bloc/bloc_for_speech_to_text/stt_bloc.dart';
 import 'package:intern/prathamCode/bottomApp.dart';
 
 void main() {
@@ -20,6 +21,9 @@ class FinalAnimation extends StatelessWidget {
         },),
         BlocProvider(create: (context) {
           return MicBloc();
+        },),
+        BlocProvider(create: (context) {
+          return SttBloc();
         },)
       ],
       child: MaterialApp(
