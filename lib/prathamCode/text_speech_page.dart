@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'bloc/bloc_for_mic_widget/mic_bloc.dart';
 import 'custom_mic_widget.dart';
 import 'bottm_sheet_widget.dart';
 
@@ -12,6 +14,7 @@ class FullScreenBottomSheet extends StatefulWidget {
 class _FullScreenBottomSheetState extends State<FullScreenBottomSheet> with TickerProviderStateMixin{
 
   late AnimationController _rotationController;
+  late MicBloc? micBloc;
 
   @override
   void initState() {
@@ -20,6 +23,14 @@ class _FullScreenBottomSheetState extends State<FullScreenBottomSheet> with Tick
     _rotationController = AnimationController(
         vsync: this,
         duration: Duration(seconds: 5))..repeat();
+
+    context.read<MicBloc>().add(StartMicEvent());
+  }
+
+  @override
+  void didChangeDependencies() {
+    micBloc = context.read<MicBloc>();
+    super.didChangeDependencies();
   }
 
 
@@ -27,6 +38,7 @@ class _FullScreenBottomSheetState extends State<FullScreenBottomSheet> with Tick
   void dispose() {
     // TODO: implement dispose
     _rotationController.dispose();
+    micBloc?.add(StopMicEvent());
     super.dispose();
   }
 
@@ -59,21 +71,18 @@ class _FullScreenBottomSheetState extends State<FullScreenBottomSheet> with Tick
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           CircleAvatar(
+                              backgroundColor: Colors.green,
                               child: Icon(Icons.done,
-                                  color: Colors.white, size: 30),
-                              backgroundColor: Colors.green),
-                          Hero(
-                            tag: "pratham",
-                            child: CustomMicWidget(
-                              isListening: true,
-                              height: 400,
-                              width: 300,
-                            ),
+                                  color: Colors.white, size: 30)),
+                          CustomMicWidget(
+                            isListening: true,
+                            height: 400,
+                            width: 300,
                           ),
                           CircleAvatar(
+                            backgroundColor: Colors.red,
                             child: Icon(Icons.close,
                                 color: Colors.white, size: 30),
-                            backgroundColor: Colors.red,
                           ),
                         ],
                       ),

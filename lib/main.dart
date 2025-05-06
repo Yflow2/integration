@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intern/prathamCode/bloc/bloc_for_mic_widget/mic_bloc.dart';
 import 'package:intern/prathamCode/bloc/bloc_for_more_wigdet/more_bloc.dart';
 import 'package:intern/prathamCode/bottomApp.dart';
 
@@ -16,6 +17,9 @@ class FinalAnimation extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) {
           return MoreBloc();
+        },),
+        BlocProvider(create: (context) {
+          return MicBloc();
         },)
       ],
       child: MaterialApp(

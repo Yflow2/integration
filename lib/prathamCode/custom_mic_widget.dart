@@ -2,6 +2,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'dart:developer' as dev;
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intern/prathamCode/bloc/bloc_for_mic_widget/mic_bloc.dart';
+
 class CustomMicWidget extends StatefulWidget {
   final double width;
   final double height;
@@ -130,28 +133,6 @@ class _CustomMicWidgetState extends State<CustomMicWidget>
     super.dispose();
   }
 
-  void _toggleListening() {
-    setState(() {
-      isListening = !isListening;
-      if (isListening) {
-        _spreadRadius = 15;
-        _blurRadius = 15;
-        _pulseController.repeat(reverse: true);
-        for (var controller in controllers) {
-          controller.repeat(reverse: true);
-        }
-      } else {
-        _spreadRadius = 0;
-        _blurRadius = 0;
-        _pulseController.stop();
-        _rotationController.stop();
-        _pulseController.value = 0; // Reset scale
-        for (var controller in controllers) {
-          controller.stop();
-        }
-      }
-    });
-  }
 
   late var screenSize;
   late double ringRadius; // Responsive ringRadius
@@ -173,76 +154,115 @@ class _CustomMicWidgetState extends State<CustomMicWidget>
 
 
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        if (isListening)
-          Positioned.fill(
-            child: CustomPaint(
-              painter: CircleVisualizerPainter(animations, ringRadius),
-              child: SizedBox(
-                  width: screenSize.width,
-                  height: screenSize.width), // Responsive size
-            ),
-          ),
-        GestureDetector(
-          onTap: widget.disabled ? widget.onButtonPressed : _toggleListening,
-          child: AnimatedBuilder(
-            animation: _rotationController,
-            builder: (_, __) {
-              return Stack(
-                alignment: Alignment.center,
-                clipBehavior: Clip.none,
-                children: [
-                  ScaleTransition(
-                    scale: _pulseController,
-                    child: Transform.rotate(
-                      angle: _rotationController.value * 2 * pi,
-                      child: Container(
-                        width: glowSize,
-                        height: glowSize,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: SweepGradient(
-                            colors: [
-                              Colors.purple.withValues(alpha: 0.4),
-                              Colors.blue.withValues(alpha: 0.4),
-                              Colors.red.withValues(alpha: 0.4),
-                              Colors.purple.withValues(alpha: 0.4),
-                            ],
-                            stops: const [0.0, 0.5, 0.9, 1.0],
-                            transform: GradientRotation(pi / 4),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.purple.withValues(alpha: 1),
-                              blurRadius: _blurRadius,
-                              spreadRadius: _spreadRadius,
+    return BlocBuilder<MicBloc, MicState>(
+      builder: (context, state) {
+
+        isListening = state is MicListeningState;
+
+        if (isListening) {
+          // Set visual properties for the listening state
+          _spreadRadius = 15;
+          _blurRadius = 15;
+
+          // Start the pulse and rotation animations
+          if (!_pulseController.isAnimating) {
+            _pulseController.repeat(reverse: true);
+          }
+          if (!_rotationController.isAnimating) {
+            _rotationController.repeat();
+          }
+          for (var controller in controllers) {
+            if (!controller.isAnimating) {
+              controller.repeat(reverse: true);
+            }
+          }
+        } else {
+          // Reset visual properties for the not listening state
+          _spreadRadius = 0;
+          _blurRadius = 0;
+
+          _pulseController.stop();
+          _rotationController.stop();
+          _pulseController.value = 0; // Reset scale
+          for (var controller in controllers) {
+
+            controller.stop();
+          }
+        }
+
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            if (isListening)
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: CircleVisualizerPainter(animations, ringRadius),
+                  child: SizedBox(
+                      width: screenSize.width,
+                      height: screenSize.width), // Responsive size
+                ),
+              ),
+            GestureDetector(
+              onTap: widget.disabled ? widget.onButtonPressed : () {
+                context.read<MicBloc>().add(ToggleMicEvent());
+              },
+              child: AnimatedBuilder(
+                animation: _rotationController,
+                builder: (_, __) {
+                  return Stack(
+                    alignment: Alignment.center,
+                    clipBehavior: Clip.none,
+                    children: [
+                      ScaleTransition(
+                        scale: _pulseController,
+                        child: Transform.rotate(
+                          angle: _rotationController.value * 2 * pi,
+                          child: Container(
+                            width: glowSize,
+                            height: glowSize,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: SweepGradient(
+                                colors: [
+                                  Colors.purple.withValues(alpha: 0.4),
+                                  Colors.blue.withValues(alpha:0.4),
+                                  Colors.red.withValues(alpha:0.4),
+                                  Colors.purple.withValues(alpha:0.4),
+                                ],
+                                stops: const [0.0, 0.5, 0.9, 1.0],
+                                transform: GradientRotation(pi / 4),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.purple.withValues(alpha:1),
+                                  blurRadius: _blurRadius,
+                                  spreadRadius: _spreadRadius,
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  // Mic Button
-                  Container(
-                    width: micButtonSize,
-                    height: micButtonSize,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF1A1A3C),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child:
-                          Icon(Icons.mic, color: Colors.white, size: iconSize),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ],
+                      // Mic Button
+                      Container(
+                        width: micButtonSize,
+                        height: micButtonSize,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF1A1A3C),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Icon(Icons.mic, color: Colors.white, size: iconSize),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
