@@ -45,7 +45,7 @@ class SttBloc extends Bloc<SttEvent,SttState>{
 
     if(available) {
        emit(SpeechListening());
-       speechToText.listen(
+        speechToText.listen(
         onResult: (result) {
           emit(SpeechResult(result.recognizedWords));
         },
