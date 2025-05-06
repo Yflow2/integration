@@ -1,24 +1,26 @@
-
-
-
 part of 'stt_bloc.dart';
 
 abstract class SttState {}
 
-class SpeechInitial extends SttState{}
+class SpeechInitial extends SttState {}
 
-class SpeechListening extends SttState{}
+class SpeechReady extends SttState {}
 
-class SpeechNotListening extends SttState{}
+class SpeechListening extends SttState {}
 
-class SpeechResult extends SttState{
-  final String text;
+class SpeechNotListening extends SttState {}
 
-  SpeechResult(this.text);
+class SpeechPartial extends SttState {
+  final String partialText;
+  SpeechPartial(this.partialText);
 }
 
-class SpeechError extends SttState{
-  final String text;
+class SpeechResult extends SttState {
+  final String recognizedText;
+  SpeechResult({required this.recognizedText});
+}
 
-  SpeechError(this.text);
+class SpeechError extends SttState {
+  final String message;
+  SpeechError(this.message);
 }

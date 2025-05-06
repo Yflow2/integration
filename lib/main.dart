@@ -4,8 +4,17 @@ import 'package:intern/prathamCode/bloc/bloc_for_mic_widget/mic_bloc.dart';
 import 'package:intern/prathamCode/bloc/bloc_for_more_wigdet/more_bloc.dart';
 import 'package:intern/prathamCode/bloc/bloc_for_speech_to_text/stt_bloc.dart';
 import 'package:intern/prathamCode/bottomApp.dart';
+import 'package:localblocobserver/localblocobserver.dart';
 
 void main() {
+
+  Bloc.observer = CustomizableBlocObserver(
+    isDebugEnabled: true,
+    debugShowEvent: true,
+    debugShowState: true,
+    debugShowTransition: true,
+  );
+
   runApp(FinalAnimation());
 }
 
@@ -23,7 +32,7 @@ class FinalAnimation extends StatelessWidget {
           return MicBloc();
         },),
         BlocProvider(create: (context) {
-          return SttBloc();
+          return SttBloc()..add(InitStt());
         },)
       ],
       child: MaterialApp(

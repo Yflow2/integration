@@ -26,14 +26,14 @@ class _FullScreenBottomSheetState extends State<FullScreenBottomSheet> with Tick
         vsync: this,
         duration: Duration(seconds: 5))..repeat();
 
-    context.read<MicBloc>().add(StartMicEvent());
-    context.read<SttBloc>().add(StartListening());
+/*    context.read<MicBloc>().add(StartMicEvent());*/
+    /*context.read<SttBloc>().add(StartListening());*/
   }
 
   @override
   void didChangeDependencies() {
-    micBloc = context.read<MicBloc>();
-    sttBloc = context.read<SttBloc>();
+/*    micBloc = context.read<MicBloc>();*/
+    /*sttBloc = context.read<SttBloc>();*/
     super.didChangeDependencies();
   }
 
@@ -42,8 +42,8 @@ class _FullScreenBottomSheetState extends State<FullScreenBottomSheet> with Tick
   void dispose() {
     // TODO: implement dispose
     _rotationController.dispose();
-    micBloc?.add(StopMicEvent());
-    sttBloc?.add(StopListening());
+/*    micBloc?.add(StopMicEvent());*/
+/*    sttBloc?.add(StopListening());*/
     super.dispose();
   }
 

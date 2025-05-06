@@ -158,7 +158,7 @@ class _CustomMicWidgetState extends State<CustomMicWidget>
     return BlocBuilder<MicBloc, MicState>(
       builder: (context, state) {
 
-        isListening = state is MicListeningState;
+        bool isListening = state is MicListeningState;
 
         if (isListening) {
           // Set visual properties for the listening state
@@ -205,8 +205,8 @@ class _CustomMicWidgetState extends State<CustomMicWidget>
               ),
             GestureDetector(
               onTap: widget.disabled ? widget.onButtonPressed : () {
-                context.read<MicBloc>().add(ToggleMicEvent());
                 context.read<SttBloc>().add(ToggleListening());
+                context.read<MicBloc>().add(ToggleMicEvent());
               },
               child: AnimatedBuilder(
                 animation: _rotationController,

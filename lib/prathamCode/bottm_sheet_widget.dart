@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intern/prathamCode/bloc/bloc_for_speech_to_text/stt_bloc.dart';
 import 'dart:math';
+import 'dart:developer' as dev;
 
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -16,9 +17,7 @@ class _bottomsheetComponentsState extends State<bottomsheetComponents>
     with SingleTickerProviderStateMixin {
   late AnimationController _rotationController;
 
-  late SpeechToText _speechToText;
   String _text = "Press the button to toggle";
-  double _confidence = 1.0;
   bool isListening = false;
 
 
@@ -26,12 +25,11 @@ class _bottomsheetComponentsState extends State<bottomsheetComponents>
   void initState() {
     super.initState();
 
-    _speechToText = SpeechToText();
-    _initializeSpeechToText();
 
     _rotationController =
     AnimationController(vsync: this, duration: Duration(seconds: 5))
       ..repeat();
+
   }
 
 
@@ -72,19 +70,30 @@ class _bottomsheetComponentsState extends State<bottomsheetComponents>
                       alignment: Alignment.topCenter,
                       child: Padding(
                         padding: const EdgeInsets.only(top: 50),
-                        child: BlocBuilder<SttBloc,SttState>(builder: (context, state) {
+                        child: BlocBuilder<SttBloc,SttState>(
+                          builder: (context, state) {
 
                           //Empty text to add if available
-                          String text = "";
-                          bool isListening = state is SpeechListening;
+                          String text = "Press the button to toggle";
 
-                          if(state is SpeechResult){
-                            text = state.text;
+                          if(state is SpeechListening){
+                            text = "Listening...";
+                          }
+                          else if(state is SpeechPartial){
+                            text = state.partialText;
+                          }
+                          else if(state is SpeechError){
+                            text = 'Error: ${state.message}';
+                          }
+                          else if(state is SpeechResult){
+                            dev.log("EMIT: ${state.recognizedText}");
+                            text = state.recognizedText;
+                            dev.log("$state");
                           }
 
                           return Text(
                             //Enter the text if captured by user
-                            text.isNotEmpty? text : _text,
+                            text.isNotEmpty ? text : _text,
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 30,
                                 color: Colors.black,
@@ -100,48 +109,5 @@ class _bottomsheetComponentsState extends State<bottomsheetComponents>
         );
       },
     );
-  }
-
-  void _startListening() async {
-    bool available = await _speechToText.initialize(
-/*      onStatus: (val) => dev.log("onStatus: $val"),
-      onError: (val) => dev.log("onError: $val"),*/
-    );
-    if (available) {
-      setState(() {
-        isListening = true;
-      });
-      _speechToText.listen(
-        onResult: (result) {
-          setState(() {
-            _text = result.recognizedWords;
-            if (result.hasConfidenceRating && result.confidence > 0) {
-              _confidence = result.confidence;
-              _stopListening();
-            }
-          });
-        },
-      );
-    } else {
-      // dev.log("SpeechToText initialization failed.");
-    }
-  }
-
-  void _stopListening() {
-    isListening = false;
-    _speechToText.stop();
-/*    _pulseController.stop();
-    _pulseController.value = 1.0;*/
-    setState(() {});
-  }
-
-  Future<void> _initializeSpeechToText() async {
-    bool available = await _speechToText.initialize(
-/*      onStatus: (val) => dev.log("onStatus: $val"),
-      onError: (val) => dev.log("onError: $val"),*/
-    );
-    if (!available) {
-      // dev.log("SpeechToText initialization failed.");
-    }
   }
 }
